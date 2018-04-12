@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>验证码</title>
+</head>
+
+<body>
+    <!-- 绘制canvas画布
+        绘制一个矩形
+        设置验证码随机数
+        绘制随机干扰线
+        绘制随机干扰点
+        旋转验证码中的随机数
+        重新获取验证码
+         -->
+
+    <canvas id="canvas"></canvas>
+    <a id="changeImg">重新获取</a>
+    <script>
+
+
+        function draw() {
+            var canvas = document.getElementById('canvas');
+            var context = canvas.getContext('2d');
+            canvas.width = 120;
+            canvas.height = 40;
+            context.strokeRect(0, 0, 120, 40);
+
+            //  定义一个数组存放验证码的随机数，设置数字和字母
+            var str = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            var aCode = str.split("");
+
+            //  设置验证码的随机数
+            // for (var i = 0; i < 4; i++) {
+            //     var x = 20 + i * 20;
+            //     var y = 20 + Math.random() * 10;
+            //     //获取一个随机的索引值
+            //     var index = Math.floor(Math.random() * aCode.length);
+            //     //获取数组里面的随机内容
+            //     var txt = aCode[index];
+
+            //     context.font = "bold 20px 微软雅黑";
+            //     context.fillText(txt, x, y);
+            // }
+
+            //设置是随机数上的随机颜色
+            function getColor() {
+                var r = Math.floor(Math.random() * 256);
+                var g = Math.floor(Math.random() * 256);
+                var b = Math.floor(Math.random() * 256);
+                if (r == 255 && g == 255 && b == 255) {
+                    r = 0;
+                    g = 0;
+                    b = 0;
+                }
+                return "rgb(" + r + ", " + g + ", " + b + ")";
+            }
+            context.fillStyle = getColor();
+
+            //设置随机干扰线
+            for (var i = 0; i < 8; i++) {
+                context.strokeStyle = getColor();
+                context.beginPath();
+                context.moveTo(Math.random() * 120, Math.random() * 40);
+                context.lineTo(Math.random() * 120, Math.random() * 40);
+                context.stroke();
+            }
+
+            //绘制随机干扰点
+            for (var i = 0; i < 20; i++) {
+                var x = Math.random() * 120,
+                    y = Math.random() * 40;
+                context.strokeStyle = getColor();
+                context.beginPath();
+                context.moveTo(x, y);
+                context.lineTo(x + 1, y + 1);
+                context.stroke();
+            }
+
+            //旋转验证码中的随机数
+            //旋转原理是每当绘制一个数字之前将画布移动到相应数字的x,y的点，然后以点进行旋转，旋转好后绘制随机数
+            for (var i = 0; i < 4; i++) {
+                var deg = Math.random() * 45 * Math.PI / 180;
+                var x = 20 + i * 20;
+                var y = 20 + Math.random() * 10;
+                //获取一个随机的索引值
+                var index = Math.floor(Math.random() * aCode.length);
+                var txt = aCode[index];
+                context.font = "bold 20px 微软雅黑";
+
+                context.fillStyle = getColor();
+                context.translate(x, y);
+                context.rotate(deg);
+                context.fillText(txt, 0, 0);
+                context.rotate(-deg);
+                context.translate(-x, -y);
+            }
+        }
+        draw();
+        //重新获取验证码
+        document.getElementById("changeImg").onclick = function (e) {
+            //防止鼠标默认事件
+            e.preventDefault();
+            draw();
+        }
+
+    </script>
+</body>
+
+</html>
